@@ -31,6 +31,12 @@ export async function registerValidation(values) {
   return errors;
 }
 
+// 5. Validate Profile Page
+export async function profileValidation(values) {
+  const errors = emailVerify({}, values);
+  return errors;
+}
+
 // Validate Password
 function passwordVerify(errors = {}, values) {
   const specialChars = /[`!@#$%^&*()_+\-={};':"|,.<>?~]/;
