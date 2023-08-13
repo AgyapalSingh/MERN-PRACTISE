@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
   res.status(201).json("Home GET Request");
 });
 
-// API ROUTES
+// API ROUTES\
 
 app.use("/api", router);
 
