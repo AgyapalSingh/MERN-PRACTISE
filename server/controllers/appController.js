@@ -1,3 +1,6 @@
+import UserModel from "../model/User.model.js";
+import bcrypt from "bcrypt";
+
 /** POST: http://localhost:8080/api/register 
  * @param : {
   "username" : "example123",
@@ -11,7 +14,40 @@
 }
 */
 export async function register(req, res) {
-  res.json("register route");
+  try {
+    const { username, password, profile, email } = req.body;
+
+    // Check if username already exists
+    const existingUsername = await UserModel.findOne({ username });
+    if (existingUsername) {
+      return res.status(400).json({ error: "Please use a unique username" });
+    }
+
+    // Check if email already exists
+    const existingEmail = await UserModel.findOne({ email });
+    if (existingEmail) {
+      return res.status(400).json({ error: "Please use a unique email" });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user instance
+    const user = new UserModel({
+      username,
+      password: hashedPassword,
+      profile: profile || "",
+      email,
+    });
+
+    // Save the user to the database
+    const savedUser = await user.save();
+
+    // Respond with success message
+    return res.status(201).json({ msg: "User Registered Successfully" });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
 }
 
 /** POST: http://localhost:8080/api/login 
